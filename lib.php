@@ -671,6 +671,25 @@ function scorm_grade_item_update($scorm, $grades=null) {
         } else {
             $params['gradetype'] = GRADE_TYPE_NONE;
         }
+    } elseif (is_array($grades) && $scorm->grademethod == SPECIFYSCO && $scorm->whatgrade == FIRSTATTEMPT) {
+        $gradeuserid = null;
+        $gradesrawgrade = null;
+
+        foreach ($grades as $gradesuserid => $gradedata) { // Only has one object in array
+            $gradeuserid = $gradesuserid;
+            $gradesrawgrade = $gradedata->rawgrade;
+        }
+
+        $gradesinfo = grade_get_grades($scorm->course, 'mod', 'scorm', $scorm->id, $gradeuserid);
+        if ($gradesinfo && $gradesinfo->items) {
+            foreach ($gradesinfo->items as $gradeitem) {
+                foreach ($gradeitem->grades as $userid => $grade) {
+                    if ($userid == $gradeuserid && grade_floats_different($gradesrawgrade ,$grade->grade)) { //grade info for userid exist, grade not same, use existing one.
+                        $grades = $gradeitem->grades;
+                    }
+                }
+            }
+        }
     } else {
         $params['gradetype'] = GRADE_TYPE_VALUE;
         $params['grademax']  = $scorm->maxgrade;

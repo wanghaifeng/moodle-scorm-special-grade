@@ -211,6 +211,16 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addHelpButton('grademethod', 'grademethod', 'scorm');
         $mform->setDefault('grademethod', $cfgscorm->grademethod);
 
+        // Grade Scoes.
+        $gradescoeses = array();
+        foreach (scorm_get_scoes($this->current->id) as $sco) {
+            $gradescoeses[$sco->id] = $sco->title;
+        }
+        $mform->addElement('select', 'gradescoesid', get_string('gradescoesid', 'scorm'),  $gradescoeses);
+        $mform->disabledIf('gradescoesid', 'grademethod', 'ne', SPECIFYSCO);
+        $mform->addHelpButton('gradescoesid', 'gradescoesid', 'scorm');
+        $mform->setDefault('gradescoesid', $cfgscorm->gradescoesid);
+
         // Maximum Grade.
         for ($i = 0; $i <= 100; $i++) {
             $grades[$i] = "$i";

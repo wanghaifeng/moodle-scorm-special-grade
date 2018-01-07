@@ -42,6 +42,7 @@ define('GRADESCOES', '0');
 define('GRADEHIGHEST', '1');
 define('GRADEAVERAGE', '2');
 define('GRADESUM', '3');
+define('SPECIFYSCO', '4');
 
 define('HIGHESTATTEMPT', '0');
 define('AVERAGEATTEMPT', '1');
@@ -98,7 +99,8 @@ function scorm_get_grade_method_array() {
     return array (GRADESCOES => get_string('gradescoes', 'scorm'),
                   GRADEHIGHEST => get_string('gradehighest', 'scorm'),
                   GRADEAVERAGE => get_string('gradeaverage', 'scorm'),
-                  GRADESUM => get_string('gradesum', 'scorm'));
+                  GRADESUM => get_string('gradesum', 'scorm'),
+                  SPECIFYSCO => get_string('specifysco', 'scorm'));
 }
 
 /**
@@ -542,8 +544,10 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
         (in_array($element, array('cmi.completion_status', 'cmi.core.lesson_status', 'cmi.success_status'))
          && in_array($track->value, array('completed', 'passed')))) {
         $scorm = $DB->get_record('scorm', array('id' => $scormid));
-        include_once($CFG->dirroot.'/mod/scorm/lib.php');
-        scorm_update_grades($scorm, $userid);
+        if($scorm->grademethod != SPECIFYSCO || $scorm->gradescoesid == $scoid) {
+            include_once($CFG->dirroot.'/mod/scorm/lib.php');
+            scorm_update_grades($scorm, $userid);
+        }
     }
 
     // Trigger CMI element events.
@@ -765,6 +769,7 @@ function scorm_grade_user($scorm, $userid) {
 
     switch ($scorm->whatgrade) {
         case FIRSTATTEMPT:
+        case SPECIFYSCO:
             return scorm_grade_user_attempt($scorm, $userid, 1);
         break;
         case LASTATTEMPT:
