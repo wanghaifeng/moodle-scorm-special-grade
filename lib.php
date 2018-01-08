@@ -684,7 +684,7 @@ function scorm_grade_item_update($scorm, $grades=null) {
         if ($gradesinfo && $gradesinfo->items) {
             foreach ($gradesinfo->items as $gradeitem) {
                 foreach ($gradeitem->grades as $userid => $grade) {
-                    if ($userid == $gradeuserid && grade_floats_different($gradesrawgrade ,$grade->grade)) { //grade info for userid exist, grade not same, use existing one.
+                    if ($userid == $gradeuserid && $grade->grade != null && grade_floats_different($gradesrawgrade ,$grade->grade)) { //grade info for userid exist, grade not same, use existing one.
                         $grades = $gradeitem->grades;
                     }
                 }
