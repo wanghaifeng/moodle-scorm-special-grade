@@ -732,6 +732,9 @@ function scorm_grade_user_attempt($scorm, $userid, $attempt=1) {
                 } else {
                     $attemptscore->lastmodify = 0;
                 }
+                if($sco->id == $scorm->gradescoesid){
+                    $attemptscore->specifysco = $userdata->score_raw;
+                }
             }
         }
     }
@@ -751,6 +754,9 @@ function scorm_grade_user_attempt($scorm, $userid, $attempt=1) {
         break;
         case GRADESCOES:
             $score = $attemptscore->scoes;
+        break;
+        case SPECIFYSCO:
+            $score = $attemptscore->specifysco;
         break;
         default:
             $score = $attemptscore->max;   // Remote Learner GRADEHIGHEST is default.
