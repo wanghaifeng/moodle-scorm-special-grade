@@ -712,6 +712,7 @@ function scorm_grade_user_attempt($scorm, $userid, $attempt=1) {
     $attemptscore->values = 0;
     $attemptscore->max = 0;
     $attemptscore->sum = 0;
+    $attemptscore->specifysco = null;
     $attemptscore->lastmodify = 0;
 
     if (!$scoes = $DB->get_records('scorm_scoes', array('scorm' => $scorm->id), 'sortorder, id')) {
@@ -732,7 +733,7 @@ function scorm_grade_user_attempt($scorm, $userid, $attempt=1) {
                 } else {
                     $attemptscore->lastmodify = 0;
                 }
-                if($sco->id == $scorm->gradescoesid){
+                if ($sco->id == $scorm->gradescoesid) {
                     $attemptscore->specifysco = $userdata->score_raw;
                 }
             }
